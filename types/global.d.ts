@@ -215,6 +215,12 @@ declare global {
         threshold: number;
         changePercent?: number;
     };
+    interface WatchlistButtonProps {
+        symbol: string;
+        company: string;
+        userId: string;
+        isInWatchlist?: boolean;
+    }
 }
 
 export {};
