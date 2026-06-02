@@ -4,11 +4,14 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import InputField from '@/components/forms/InputField';
 import FooterLink from '@/components/forms/FooterLink';
-import {signInWithEmail, signUpWithEmail} from "@/lib/actions/auth.actions";
-import {toast} from "sonner";
-import {error} from "better-auth/api";
-import {router} from "next/client";
-import {useRouter} from "next/navigation";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+interface SignInFormData {
+    email: string;
+    password: string;
+}
 
 const SignIn = () => {
     const router = useRouter()
@@ -27,11 +30,17 @@ const SignIn = () => {
     const onSubmit = async (data: SignInFormData) => {
         try {
             const result = await signInWithEmail(data);
-            if( result.success ) router.push('/')
+            if (result.success) {
+                router.push('/')
+            } else {
+                toast.error('Sign in failed', {
+                    description: result.error || 'Failed to sign in'
+                })
+            }
         } catch (e) {
             console.error(e);
-            toast.error('Sign ip failed', {
-                description: error instanceof Error ? error.message : 'Failed to sign in'
+            toast.error('Sign in failed', {
+                description: e instanceof Error ? e.message : 'Failed to sign in'
             })
         }
     }
@@ -50,7 +59,7 @@ const SignIn = () => {
                     validation={{
                         required: 'Email is required',
                         pattern: {
-                            value: /^\w+@\w+\.\w+$/,
+                            value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/,
                             message: 'Invalid email address',
                         },
                     }}

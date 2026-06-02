@@ -39,5 +39,6 @@ const WatchlistSchema = new Schema<WatchlistItem>(
 // Prevent duplicate stock per user
 WatchlistSchema.index({ userId: 1, symbol: 1 }, { unique: true });
 
- export const Watchlist: Model<WatchlistItem> =
-     (models ?.Watchlist as Model<WatchlistItem>) || model<WatchlistItem>('WatchlistItem', WatchlistSchema);
+export const Watchlist: Model<WatchlistItem> =
+    (models.Watchlist as Model<WatchlistItem>) ||
+    model<WatchlistItem>("Watchlist", WatchlistSchema);

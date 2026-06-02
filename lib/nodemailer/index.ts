@@ -16,7 +16,7 @@ export const sendWelcomeEmail = async ({ email, name, intro} : WelcomeEmailData)
         .replace('{{intro}}', intro);
 
     const mailOptions = {
-        from:`"Signalist <sdhrtjoshi@gmail.com>"`,
+        from:`"Signalist" <sdhrtjoshi@gmail.com>`,
         to: email,
         subject:`Welcome to Signalist - your stock market toolkit is ready!`,
         text: `Thanks for joining Signalist`,
