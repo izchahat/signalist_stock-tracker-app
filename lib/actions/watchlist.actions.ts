@@ -7,7 +7,14 @@ import { revalidatePath } from 'next/cache';
 import { getStocksDetails } from './finnhub.actions';
 import { Watchlist } from '@/database/models/watchlist.model';
 
-// ✅ getUserWatchlist - session user ki watchlist symbols fetch karta hai
+interface WatchlistDoc {
+    symbol: string;
+    userId: string;
+    company?: string;
+    addedAt?: Date;
+}
+
+// ✅ getUserWatchlist
 export const getUserWatchlist = async () => {
     try {
         const session = await auth.api.getSession({
@@ -26,23 +33,23 @@ export const getUserWatchlist = async () => {
     }
 };
 
-// ✅ getWatchlistSymbolsByEmail - search mein watchlist status check karne ke liye
-export const getWatchlistSymbolsByEmail = async (email: string): Promise<string[]> => {
+// ✅ getWatchlistSymbolsByEmail
+export const getWatchlistSymbolsByEmail = async (_email: string): Promise<string[]> => {
     try {
         const session = await auth.api.getSession({
             headers: await headers(),
         });
         if (!session?.user) return [];
 
-        const watchlist = await Watchlist.find({ userId: session.user.id }).lean();
-        return watchlist.map((item: any) => item.symbol.toUpperCase());
+        const watchlist = await Watchlist.find({ userId: session.user.id }).lean() as WatchlistDoc[];
+        return watchlist.map((item) => item.symbol.toUpperCase());
     } catch (error) {
         console.error('Error fetching watchlist symbols:', error);
         return [];
     }
 };
 
-// ✅ getWatchlistWithData - watchlist + stock data combine karke return karta hai
+// ✅ getWatchlistWithData
 export const getWatchlistWithData = async () => {
     try {
         const session = await auth.api.getSession({
@@ -52,12 +59,12 @@ export const getWatchlistWithData = async () => {
 
         const watchlist = await Watchlist.find({ userId: session.user.id })
             .sort({ addedAt: -1 })
-            .lean();
+            .lean() as WatchlistDoc[];
 
         if (watchlist.length === 0) return [];
 
         const stocksWithData = await Promise.all(
-            watchlist.map(async (item: any) => {
+            watchlist.map(async (item) => {
                 try {
                     const stockData = await getStocksDetails(item.symbol);
 
@@ -83,9 +90,7 @@ export const getWatchlistWithData = async () => {
             })
         );
 
-        // null values filter out karo
         const filtered = stocksWithData.filter(Boolean);
-
         return JSON.parse(JSON.stringify(filtered));
     } catch (error) {
         console.error('Error loading watchlist:', error);
@@ -93,7 +98,7 @@ export const getWatchlistWithData = async () => {
     }
 };
 
-// ✅ addToWatchlist - stock watchlist mein add karta hai
+// ✅ addToWatchlist
 export const addToWatchlist = async (symbol: string, company: string) => {
     try {
         const session = await auth.api.getSession({
@@ -125,7 +130,7 @@ export const addToWatchlist = async (symbol: string, company: string) => {
     }
 };
 
-// ✅ removeFromWatchlist - stock watchlist se remove karta hai
+// ✅ removeFromWatchlist
 export const removeFromWatchlist = async (symbol: string) => {
     try {
         const session = await auth.api.getSession({

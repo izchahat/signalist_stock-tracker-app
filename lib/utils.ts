@@ -135,10 +135,10 @@ export const getFormattedTodayDate = () => new Date().toLocaleDateString('en-US'
 export const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 
 // ✅ Generic fetch helper with optional revalidation
-export async function fetchJSON<T = any>(url: string, revalidate?: number): Promise<T> {
+export async function fetchJSON<T = unknown>(url: string, revalidate?: number): Promise<T> {
   const res = await fetch(url, {
     ...(revalidate ? { next: { revalidate } } : { cache: 'no-store' }),
   });
   if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-  return res.json();
+  return res.json() as Promise<T>;
 }
