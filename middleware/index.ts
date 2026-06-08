@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionCookie } from "better-auth/cookies";
 
+/**
+ * Enforces authentication by ensuring a session cookie exists for incoming requests.
+ *
+ * @returns A NextResponse that redirects to `/sign-in` when no session cookie is present, or a response that allows the request to continue otherwise.
+ */
 export async function middleware(request: NextRequest) {
     const sessionCookie = getSessionCookie(request);
 
