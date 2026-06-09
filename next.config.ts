@@ -1,9 +1,6 @@
 
 
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,  // 👈 add karo
-  },
   images: {
     remotePatterns: [
       {
@@ -13,4 +10,5 @@ const nextConfig = {
     ],
   },
 };
+
 export default nextConfig;
